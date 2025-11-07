@@ -151,7 +151,8 @@ class ToxicityClassifier:
                 try:
                     ctx_prob = self.predict_proba(ctx_text)
                     context_scores.append(ctx_prob)
-                except:
+                except (ValueError, RuntimeError, Exception) as e:
+                    # Skip context texts that cause errors
                     continue
             
             if context_scores:

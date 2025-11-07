@@ -20,12 +20,12 @@ def test_rule_based_detector():
     
     # Test non-toxic text
     result = detector.analyze("Have a great day!")
-    assert result['is_toxic'] == False, "Non-toxic text marked as toxic"
+    assert not result['is_toxic'], "Non-toxic text marked as toxic"
     print("✓ Non-toxic text detection passed")
     
     # Test toxic text
     result = detector.analyze("I hate you stupid idiot")
-    assert result['is_toxic'] == True, "Toxic text not detected"
+    assert result['is_toxic'], "Toxic text not detected"
     print("✓ Toxic text detection passed")
     
     # Test toxicity score calculation
@@ -77,7 +77,7 @@ def test_detector_context_patterns():
     # Test sarcasm detection
     text = "Yeah right, you're so smart"
     has_sarcasm = detector.analyze_sarcasm_indicators(text)
-    assert has_sarcasm == True, "Sarcasm not detected"
+    assert has_sarcasm, "Sarcasm not detected"
     print("✓ Sarcasm detection passed")
     
     print("Context Pattern Detection: ALL TESTS PASSED ✓\n")
