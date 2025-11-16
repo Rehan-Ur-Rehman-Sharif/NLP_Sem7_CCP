@@ -25,6 +25,7 @@ class RuleBasedDetector:
         """
         self.config = self._load_config(config_path)
         self.toxic_keywords = self.config.get('rule_based', {}).get('toxic_keywords', [])
+        self.offensive_keywords = self.config.get('rule_based', {}).get('offensive_keywords', [])
         self.context_patterns = self.config.get('rule_based', {}).get('context_patterns', [])
         self.severity_weights = self.config.get('rule_based', {}).get('severity_weights', {})
         
@@ -51,26 +52,47 @@ class RuleBasedDetector:
         # Remove extra whitespace
         text = ' '.join(text.split())
         return text
-    
+
     def detect_toxic_keywords(self, text: str) -> List[str]:
         """
         Detect toxic keywords in text.
-        
+
         Args:
             text: Input text
-            
+
         Returns:
             List of detected toxic keywords
         """
         text = self.preprocess_text(text)
         detected = []
-        
+
         for keyword in self.toxic_keywords:
             # Use word boundaries to avoid partial matches
             pattern = r'\b' + re.escape(keyword.lower()) + r'\b'
             if re.search(pattern, text):
                 detected.append(keyword)
-        
+
+        return detected
+
+    def detect_offensive_keywords(self, text: str) -> List[str]:
+        """
+        Detect offensive keywords in text.
+
+        Args:
+            text: Input text
+
+        Returns:
+            List of detected toxic keywords
+        """
+        text = self.preprocess_text(text)
+        detected = []
+
+        for keyword in self.offensive_keywords:
+            # Use word boundaries to avoid partial matches
+            pattern = r'\b' + re.escape(keyword.lower()) + r'\b'
+            if re.search(pattern, text):
+                detected.append(keyword)
+
         return detected
     
     def detect_context_patterns(self, text: str) -> List[List[str]]:
@@ -138,6 +160,7 @@ class RuleBasedDetector:
         """
         details = {
             'toxic_keywords': [],
+            'offensive_keywords': [],
             'context_patterns': [],
             'has_sarcasm': False,
             'severity': 'low'
@@ -146,7 +169,11 @@ class RuleBasedDetector:
         # Detect toxic keywords
         toxic_keywords = self.detect_toxic_keywords(text)
         details['toxic_keywords'] = toxic_keywords
-        
+
+        # Detect offensive keywords
+        offensive_keywords = self.detect_offensive_keywords(text)
+        details['offensive_keywords'] = offensive_keywords
+
         # Detect context patterns
         context_patterns = self.detect_context_patterns(text)
         details['context_patterns'] = context_patterns
@@ -161,6 +188,10 @@ class RuleBasedDetector:
         # Add points for keywords
         if toxic_keywords:
             score += len(toxic_keywords) * 0.3
+
+        # Blatant Offenses weighted severely
+        if offensive_keywords:
+            score += len(offensive_keywords) * 1.0
         
         # Add points for context patterns (weighted more heavily)
         if context_patterns:
