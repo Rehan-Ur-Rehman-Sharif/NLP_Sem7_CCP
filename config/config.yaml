@@ -9,12 +9,37 @@ rule_based:
     - "idiot"
     - "kill"
     - "die"
+
+  offensive_keywords:
+    - "nigga"
+    - "nigger"
+    - "niggers"
+    - "niggas"
+    - "retards"
+    - "retard"
+    - "autistic"
+    - "homo"
+    - "homosexual"
+    - "gay"
+    - "lesbian"
+    - "homo"
+    - "fuck"
+    - "shit"
+    - "cum"
+    - "faggot"
+    - "fag"
+    - "cuck"
+    - "whore"
+    - "slut"
+    - "bitch"
   
   # Context-aware patterns (word combinations that become toxic in context)
   context_patterns:
     - ["you", "should", "die"]
     - ["go", "kill", "yourself"]
     - ["nobody", "likes", "you"]
+    - ["kill", "yourself"]
+
   
   # Severity weights
   severity_weights:
